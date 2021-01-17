@@ -1,5 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
 
 export class CreateUserResponse {
     @ApiProperty({
