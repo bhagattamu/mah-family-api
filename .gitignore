@@ -37,3 +37,4 @@ lerna-debug.log*
 .gitignore
 package-lock.json
 .env
+uploads/projects
