@@ -24,14 +24,14 @@ export class NewUserDto {
     @IsString()
     readonly lastName: string;
 
-    @ApiProperty({
-        example: ['user'],
-        description: 'Array of roles',
-        format: 'Array of string'
-    })
-    @IsNotEmpty()
-    @IsArray()
-    readonly roles: Array<string>;
+    // @ApiProperty({
+    //     example: ['user'],
+    //     description: 'Array of roles',
+    //     format: 'Array of string'
+    // })
+    // @IsNotEmpty()
+    // @IsArray()
+    // readonly roles: Array<string>;
 
     @ApiProperty({
         example: 'bhagattamu@gmail.com',
@@ -52,12 +52,4 @@ export class NewUserDto {
     @IsNotEmpty()
     @IsString()
     readonly phone: string;
-
-    @ApiProperty({
-        example: 'pa$$w0rd',
-        description: 'Password of the user',
-        format: 'string'
-    })
-    @IsString()
-    readonly password: string;
 }

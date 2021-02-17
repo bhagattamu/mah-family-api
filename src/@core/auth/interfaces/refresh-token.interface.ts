@@ -1,8 +1,14 @@
-export interface IRefreshToken {
+import { Document } from 'mongoose';
+
+export interface IRefreshToken extends Document {
     userId: string;
     refreshToken: string;
     ip: string;
     browser: string;
     country: string;
-    valid: boolean;
+    expires: Date;
+    revoked: Date;
+    revokedByIp: string;
+    isExpired?: boolean;
+    isActive?: boolean;
 }

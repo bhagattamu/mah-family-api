@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}}</title>
+    <style>
+        body {
+            color: #363636;
+            margin: 0;
+        }
+
+        header {
+            margin: 20px;
+        }
+
+        hr {
+            border: 1px solid rgb(232, 232, 232);
+        }
+
+        .part-container {
+            margin: 20px;
+        }
+
+        .content {
+            border-bottom: 1px solid rgb(232, 232, 232);
+        }
+
+        footer {
+            margin: 20px;
+        }
+
+        .help-head {
+            font-size: 1rem;
+            margin-bottom: 0;
+        }
+
+        .thank-you p {
+            margin: 0;
+        }
+
+        a {
+            color: #9e0303;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <img src="{{clientAppURL}}/assets/images/logo/base-logo.png" alt="casey-logo" height="50" />
+    </header>
+    <div class="part-container">
+        {{> (whichMail) partialContext}}
+    </div>
+    <footer>
+        <div class="help-holder">
+            <h4 class="help-head">We're here to help!</h4>
+            <p class="help-message">If you have any questions, please feel free to <a
+                    href="https://kilroyblockchain.com/contact" target="_blank">contact us</a>.</p>
+        </div>
+        <div class="thank-you">
+            <p>Thank you,</p>
+            <p>Kilroy Blockchain</p>
+            <p>Casey Team</p>
+        </div>
+    </footer>
+</body>
+
+</html>

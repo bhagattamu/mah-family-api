@@ -11,6 +11,16 @@ export const RefreshTokenSchema = new Schema(
             type: String,
             required: true
         },
+        expires: {
+            type: Date,
+            required: true
+        },
+        revoked: {
+            type: Date
+        },
+        revokedByIp: {
+            type: String
+        },
         ip: {
             type: String,
             required: true
@@ -22,15 +32,18 @@ export const RefreshTokenSchema = new Schema(
         country: {
             type: String,
             required: true
-        },
-        valid: {
-            type: Boolean,
-            default: true,
-            required: true
         }
     },
     {
+        toJSON: { virtuals: true },
         versionKey: false,
         timestamps: true
     }
 );
+RefreshTokenSchema.virtual('isExpired').get(function() {
+    return Date.now() >= this.expires;
+});
+
+RefreshTokenSchema.virtual('isActive').get(function() {
+    return !this.revoked && !this.isExpired;
+});

@@ -1,4 +1,4 @@
-import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
+import { ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
 import { Role } from './role.enum';
@@ -10,18 +10,16 @@ export class RolesGuard extends AuthGuard('jwt') {
         super();
     }
 
-    canActivate(context: ExecutionContext): boolean {
+    canActivate(context: ExecutionContext) {
+        return super.canActivate(context);
+    }
+
+    handleRequest(err, user, info, context: ExecutionContext) {
         const requiredRoles = this.reflector.getAllAndOverride<Role[]>(ROLES_KEY, [context.getHandler(), context.getClass()]);
         if (!requiredRoles) {
             return true;
         }
-        const { user } = context.switchToHttp().getRequest();
-        return requiredRoles.some(role => user.roles?.includes(role));
-    }
-
-    handleRequest(err, user, info) {
-        // You can throw an exception based on either "info" or "err" arguments
-        if (err || !user) {
+        if (!(!err && user && user.roles && user.roles.some(role => requiredRoles.includes(role)))) {
             throw err || new UnauthorizedException();
         }
         return user;
