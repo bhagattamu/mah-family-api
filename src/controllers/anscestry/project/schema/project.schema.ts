@@ -9,6 +9,11 @@ export const ProjectSchema = new Schema(
         description: {
             type: String
         },
+        pinned: {
+            type: Boolean,
+            default: false,
+            required: true
+        },
         createdBy: {
             type: Types.ObjectId,
             ref: 'user',
@@ -16,8 +21,19 @@ export const ProjectSchema = new Schema(
         },
         contributors: [
             {
-                type: Types.ObjectId,
-                ref: 'user'
+                contributor: {
+                    type: Types.ObjectId,
+                    required: true,
+                    ref: 'user'
+                },
+                pinned: {
+                    type: Boolean,
+                    default: false
+                },
+                block: {
+                    type: Boolean,
+                    default: false
+                }
             }
         ]
     },

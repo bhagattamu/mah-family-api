@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Req } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateProjectDto } from './dto/create-project.dto';
@@ -12,7 +12,14 @@ export class ProjectService {
     async createProject(createProjectDto: CreateProjectDto, req: Request) {
         const project = new this.ProjectModel(createProjectDto);
         project.createdBy = req.user['_id'];
+        if (!(await this.getPinnedProject(req.user['_id']))) {
+            project.pinned = true;
+        }
         return await project.save();
+    }
+
+    async getPinnedProject(userId: string) {
+        return await this.ProjectModel.findOne({ createdBy: userId, pinned: true });
     }
 
     async findProjectById(projectId: string) {
@@ -21,6 +28,8 @@ export class ProjectService {
 
     async getAllProjectsAssociatedWithUser(req: Request) {
         const userId = req.user['_id'];
-        return await this.ProjectModel.find({ createdBy: userId }).exec();
+        return await this.ProjectModel.find({ createdBy: userId })
+            .sort({ pinned: -1 })
+            .exec();
     }
 }
