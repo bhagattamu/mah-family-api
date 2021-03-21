@@ -38,3 +38,6 @@ lerna-debug.log*
 package-lock.json
 .env
 uploads/projects
+.dockerignore
+docker-compose.yml
+Dockerfile
