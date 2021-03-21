@@ -23,17 +23,10 @@ export class MahUserController {
     @ApiOperation({ summary: 'Register user' })
     @ApiCreatedResponse({ description: 'Created Successfully', type: CreateUserResponse })
     async createUser(@Body() newUserDto: NewUserDto): Promise<IResponse> {
-        try {
-            return new MyResponse(true, await this.userService.createUser(newUserDto))
-                .setStatus(HttpStatus.CREATED)
-                .setMessage(['USER_REGISTERED'])
-                .setMiscellaneous(null);
-        } catch (err) {
-            return new MyResponse(false, err)
-                .setStatus(err.status)
-                .setMessage(['REGISTER_FAILED', err.message])
-                .setMiscellaneous(null);
-        }
+        return new MyResponse(true, await this.userService.createUser(newUserDto))
+            .setStatus(HttpStatus.CREATED)
+            .setMessage(['USER_REGISTERED'])
+            .setMiscellaneous(null);
     }
 
     @UseGuards(RolesGuard)
@@ -48,17 +41,10 @@ export class MahUserController {
     @ApiOperation({ summary: 'Verify User' })
     @ApiOkResponse({ description: 'Verified successfully', type: VerifyUserResponse })
     async verifyUser(@Param('id') userId: string) {
-        try {
-            return new MyResponse(true, await this.userService.verifyUser(userId))
-                .setMessage(['VERIFIED'])
-                .setStatus(HttpStatus.OK)
-                .setMiscellaneous(null);
-        } catch (err) {
-            return new MyResponse(false, err)
-                .setStatus(HttpStatus.BAD_REQUEST)
-                .setMessage(['FAILED_VERIFICATION', err.message])
-                .setMiscellaneous(null);
-        }
+        return new MyResponse(true, await this.userService.verifyUser(userId))
+            .setMessage(['VERIFIED'])
+            .setStatus(HttpStatus.OK)
+            .setMiscellaneous(null);
     }
 
     @Post('login')
@@ -66,17 +52,10 @@ export class MahUserController {
     @ApiOperation({ summary: 'Login user' })
     @ApiOkResponse({ description: 'Login success', type: LoginResponse })
     async login(@Body() loginUserDto: LoginUserDto, @Req() req: Request, @Res({ passthrough: true }) res: Response) {
-        try {
-            return new MyResponse(true, await this.userService.loginUser(loginUserDto, req, res))
-                .setStatus(HttpStatus.OK)
-                .setMessage(['LOGGED_IN'])
-                .setMiscellaneous(null);
-        } catch (err) {
-            return new MyResponse(false, err)
-                .setStatus(HttpStatus.BAD_REQUEST)
-                .setMessage(['LOGGED_IN_FAILED', err.message])
-                .setMiscellaneous(null);
-        }
+        return new MyResponse(true, await this.userService.loginUser(loginUserDto, req, res))
+            .setStatus(HttpStatus.OK)
+            .setMessage(['LOGGED_IN'])
+            .setMiscellaneous(null);
     }
 
     @Post('refresh-token')
@@ -84,17 +63,10 @@ export class MahUserController {
     @ApiOperation({ summary: 'Refresh token' })
     @ApiOkResponse({ description: 'Refreshing token success', type: RefreshTokenResponse })
     async refreshToken(@Req() req: Request, @Body() refreshTokenDto: RefreshTokenDto, @Res({ passthrough: true }) res: Response) {
-        try {
-            return new MyResponse(true, await this.userService.refreshTokens(refreshTokenDto.accessToken, req, res))
-                .setStatus(HttpStatus.OK)
-                .setMessage(['REFRESHED_TOKEN'])
-                .setMiscellaneous(null);
-        } catch (err) {
-            return new MyResponse(false, err)
-                .setStatus(HttpStatus.UNAUTHORIZED)
-                .setMessage(['TOKEN_REFRESH_FAILED', err.message])
-                .setMiscellaneous(null);
-        }
+        return new MyResponse(true, await this.userService.refreshTokens(refreshTokenDto.accessToken, req, res))
+            .setStatus(HttpStatus.OK)
+            .setMessage(['REFRESHED_TOKEN'])
+            .setMiscellaneous(null);
     }
 
     @UseGuards(RolesGuard)
@@ -109,17 +81,10 @@ export class MahUserController {
     @ApiOperation({ summary: 'Authenticate user' })
     @ApiOkResponse({ description: 'Authentication success' })
     async auth(@Req() req: Request) {
-        try {
-            return new MyResponse(true, await this.userService.authUserByToken(req))
-                .setStatus(HttpStatus.OK)
-                .setMessage(['AUTH_SUCCESS'])
-                .setMiscellaneous(null);
-        } catch (err) {
-            return new MyResponse(false, err)
-                .setStatus(HttpStatus.UNAUTHORIZED)
-                .setMessage(['AUTH_FAILED', err.message])
-                .setMiscellaneous(null);
-        }
+        return new MyResponse(true, await this.userService.authUserByToken(req))
+            .setStatus(HttpStatus.OK)
+            .setMessage(['AUTH_SUCCESS'])
+            .setMiscellaneous(null);
     }
 
     @UseGuards(RolesGuard)
@@ -134,16 +99,9 @@ export class MahUserController {
     @ApiOperation({ summary: 'Logout user' })
     @ApiOkResponse({ description: 'Logout success', type: LogoutResponse })
     async logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
-        try {
-            return new MyResponse(true, await this.userService.logoutUser(req, res))
-                .setStatus(HttpStatus.OK)
-                .setMessage(['LOGGED_OUT'])
-                .setMiscellaneous(null);
-        } catch (err) {
-            return new MyResponse(false, err)
-                .setStatus(HttpStatus.BAD_REQUEST)
-                .setMessage(['LOGOUT_FAILED', err.message])
-                .setMiscellaneous(null);
-        }
+        return new MyResponse(true, await this.userService.logoutUser(req, res))
+            .setStatus(HttpStatus.OK)
+            .setMessage(['LOGGED_OUT'])
+            .setMiscellaneous(null);
     }
 }

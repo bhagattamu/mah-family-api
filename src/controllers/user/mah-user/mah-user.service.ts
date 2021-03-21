@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, ConflictException, ForbiddenException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { v4 } from 'uuid';
@@ -17,7 +17,7 @@ export class MahUserService {
     async createUser(newUserDto: NewUserDto) {
         const user = new this.UserModel(newUserDto);
         if (await this.checkEmail(user.email)) {
-            throw new BadRequestException(`ALREADY_REGISTERED`);
+            throw new ConflictException(`ALREADY_REGISTERED`);
         }
         this.setVerificationInfo(user);
         user.password = Math.random()
@@ -70,7 +70,7 @@ export class MahUserService {
         const match = await compare(password, user.password);
         if (!match) {
             await this.upPasswordNotMatch(user);
-            throw new BadRequestException('PASSWORD_WRONG');
+            throw new ForbiddenException('PASSWORD_WRONG');
         }
         return match;
     }
@@ -80,7 +80,7 @@ export class MahUserService {
         await user.save();
         if (user.loginAttempts > MAX_LOGIN_ATTEMPT) {
             this.blockUser(user, 'TEMP', MAX_LOGIN_BLOCK);
-            throw new BadRequestException('USER_BLOCKED');
+            throw new ForbiddenException('USER_BLOCKED');
         }
     }
 
@@ -102,7 +102,7 @@ export class MahUserService {
         if (await this.UserModel.findOne({ email: email, block: false, blockExpires: { $exists: true, $lt: new Date() } })) {
             return false;
         } else {
-            throw new BadRequestException('USER_BLOCKED');
+            throw new ForbiddenException('USER_BLOCKED');
         }
     }
 
@@ -110,7 +110,7 @@ export class MahUserService {
         if (await this.UserModel.findOne({ email: email, verified: true })) {
             return true;
         } else {
-            throw new BadRequestException('NOT_VERIFIED');
+            throw new NotFoundException('NOT_VERIFIED');
         }
     }
 

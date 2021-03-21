@@ -4,14 +4,12 @@ export class Response {
     success: boolean;
     httpStatus: number;
     data: any;
-    error: any;
     message: Array<string>;
     miscellaneous: any;
 
     constructor(success: boolean, data: any) {
         this.success = success;
         this.data = this.success ? data : null;
-        this.error = this.success ? null : data;
     }
 
     setSuccess(success: boolean) {
@@ -21,11 +19,6 @@ export class Response {
 
     setData(data: any) {
         this.data = data;
-        return this;
-    }
-
-    setError(error: any) {
-        this.error = error;
         return this;
     }
 
