@@ -10,14 +10,6 @@ export class CreateProjectDto {
     @IsString()
     readonly projectName: string;
 
-    // @ApiProperty({
-    //     example: 'jsafjlasfjsfasf',
-    //     description: 'Created by user id'
-    // })
-    // @IsNotEmpty()
-    // @IsString()
-    // readonly createdBy: string;
-
     @ApiProperty({
         example: ['safasfasf', 'sdasdasd'],
         description: 'Array of userId active for contribution in this project'
