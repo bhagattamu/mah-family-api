@@ -25,17 +25,10 @@ export class ProjectController {
     @ApiOperation({ summary: 'Create a project to build family tree.' })
     @ApiOkResponse({ description: 'Created project successfully' })
     async createProject(@Body() createProjectDto: CreateProjectDto, @Req() req: Request) {
-        try {
-            return new Response(true, await this.projectService.createProject(createProjectDto, req))
-                .setStatus(HttpStatus.CREATED)
-                .setMessage(['PROJECT_CREATED'])
-                .setMiscellaneous(null);
-        } catch (err) {
-            return new Response(false, err)
-                .setStatus(HttpStatus.BAD_REQUEST)
-                .setMessage(['PROJECT_CREATION_FAILED', err.message])
-                .setMiscellaneous(null);
-        }
+        return new Response(true, await this.projectService.createProject(createProjectDto, req))
+            .setStatus(HttpStatus.CREATED)
+            .setMessage(['PROJECT_CREATED'])
+            .setMiscellaneous(null);
     }
 
     @Get('user/all')
@@ -49,31 +42,17 @@ export class ProjectController {
     @ApiOperation({ summary: 'Fetched a projects in which user involved.' })
     @ApiOkResponse({ description: 'Fetched project successfully' })
     async getAllProjectsAssociatedWithUser(@Req() req: Request) {
-        try {
-            return new Response(true, await this.projectService.getAllProjectsAssociatedWithUser(req))
-                .setStatus(HttpStatus.OK)
-                .setMessage(['FETCHED_PROJECT'])
-                .setMiscellaneous(null);
-        } catch (err) {
-            return new Response(false, err)
-                .setStatus(HttpStatus.BAD_REQUEST)
-                .setMessage(['FETCH_PROJECT_FAILED', err.message])
-                .setMiscellaneous(null);
-        }
+        return new Response(true, await this.projectService.getAllProjectsAssociatedWithUser(req))
+            .setStatus(HttpStatus.OK)
+            .setMessage(['FETCHED_PROJECT'])
+            .setMiscellaneous(null);
     }
 
     @Get(':projectId')
     async getProjectById(@Param('projectId') projectId: string) {
-        try {
-            return new Response(true, await this.projectService.findProjectById(projectId))
-                .setStatus(HttpStatus.OK)
-                .setMessage(['FETCHED_PROJECT'])
-                .setMiscellaneous(null);
-        } catch (err) {
-            return new Response(false, err)
-                .setStatus(HttpStatus.BAD_REQUEST)
-                .setMessage(['FETCH_PROJECT_FAILED', err.message])
-                .setMiscellaneous(null);
-        }
+        return new Response(true, await this.projectService.findProjectById(projectId))
+            .setStatus(HttpStatus.OK)
+            .setMessage(['FETCHED_PROJECT'])
+            .setMiscellaneous(null);
     }
 }
