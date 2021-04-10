@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { MailService } from './mail.service';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
+import { APP_MAIL, APP_MAIL_SECRET } from 'src/@core/config';
 
 @Module({
     imports: [
@@ -12,15 +13,15 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
                     port: 587,
                     secure: false,
                     auth: {
-                        user: process.env.EMAIL,
-                        pass: process.env.PASSWORD
+                        user: APP_MAIL,
+                        pass: APP_MAIL_SECRET
                     }
                 },
                 defaults: {
                     from: '"nest-modules" <modules@nestjs.com>'
                 },
                 template: {
-                    dir: process.cwd() + '/src/components/utils/mail/templates/',
+                    dir: process.cwd() + '/src/controllers/utils/mail/templates/',
                     adapter: new HandlebarsAdapter(),
                     options: {
                         strict: true
@@ -28,7 +29,7 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
                 },
                 options: {
                     partials: {
-                        dir: process.cwd() + '/src/components/utils/mail/templates/partials/',
+                        dir: process.cwd() + '/src/controllers/utils/mail/templates/partials/',
                         options: {
                             strict: true
                         }

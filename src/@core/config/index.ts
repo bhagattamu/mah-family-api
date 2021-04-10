@@ -8,10 +8,15 @@ export const SIGN_UP_LIMIT = Number(process.env.SIGN_UP_LIMIT);
 export const JWT_SECRET = process.env.JWT_SECRET;
 export const TOKEN_EXPIRY_TIME = process.env.TOKEN_EXPIRY_TIME;
 export const CRYPTO_REFRESH_SECRET = process.env.CRYPTO_REFRESH_SECRET;
+export const CRYPTO_RESET_PASSWORD_SECRET = process.env.CRYPTO_RESET_PASSWORD_SECRET;
 export const MAX_LOGIN_ATTEMPT = Number(process.env.MAX_LOGIN_ATTEMPT);
 export const MAX_LOGIN_BLOCK = Number(process.env.MAX_LOGIN_BLOCK);
 export const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET;
 export const REFRESH_TOKEN_EXPIRY_TIME = process.env.REFRESH_TOKEN_EXPIRY_TIME;
+export const JWT_RESET_PASSWORD_SECRET = process.env.JWT_RESET_PASSWORD_SECRET;
+export const RESET_PASSWORD_TOKEN_EXPIRY_TIME = process.env.RESET_PASSWORD_TOKEN_EXPIRY_TIME;
+export const APP_MAIL = process.env.APP_MAIL;
+export const APP_MAIL_SECRET = process.env.APP_MAIL_SECRET;
 export const GENDER = [
     {
         sGender: 'M',

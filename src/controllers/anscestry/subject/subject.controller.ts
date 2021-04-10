@@ -14,7 +14,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('Subject -> An individual to place in family tree') // Proband is a particular subject being studied, Proband is noted with square(male) and circle(female)
 @UseGuards(RolesGuard)
-@Controller('anscestry/proband')
+@Controller('ancestry/proband')
 export class SubjectController {
     constructor(private subjectService: SubjectService) {}
 

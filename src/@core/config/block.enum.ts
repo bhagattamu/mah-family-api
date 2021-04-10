@@ -1,0 +1,5 @@
+export enum BlockType {
+    NO = 'NO',
+    INCORRECT_CREDENTIAL = 'INCORRECT_CREDENTIAL',
+    COMPLETE_BLOCK = 'COMPLETE_BLOCK'
+}

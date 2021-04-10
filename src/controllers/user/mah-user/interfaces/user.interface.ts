@@ -1,5 +1,12 @@
 import { Document } from 'mongoose';
 
+export interface IBlock {
+    status: boolean;
+    count: number;
+    blockExpires: Date;
+    type: string;
+}
+
 export interface IUser extends Document {
     firstName: string;
     lastName: string;
@@ -11,11 +18,12 @@ export interface IUser extends Document {
     verified: boolean;
     verificationExpires: Date;
     loginAttempts?: number;
-    block?: boolean;
-    blockExpires?: Date;
+    block?: IBlock;
+    isBlock: boolean;
     resetPasswordToken?: string;
     autoPassword?: boolean;
     reCaptchaToken?: string;
+    fullName?: string;
 }
 
 export interface IUserResponse {
@@ -25,4 +33,6 @@ export interface IUserResponse {
     email: string;
     phone: string;
     roles: Array<string>;
+    isBlock: boolean;
+    fullName?: string;
 }

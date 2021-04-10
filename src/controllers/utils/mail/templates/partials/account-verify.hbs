@@ -1,0 +1,66 @@
+<style>
+    .welcome {
+        border-bottom: 1px solid rgb(232, 232, 232);
+    }
+
+    .welcome a {
+        background-color: #363636;
+        border: none;
+        border-radius: 5px;
+        color: white;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin-bottom: 40px;
+    }
+
+    .credential-group {
+        margin-top: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .input-field {
+        position: relative;
+        margin-top: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .input-field label {
+        position: absolute;
+        top: 0;
+        font-size: 1rem;
+        cursor: text;
+        transform: translateY(-16px) !important;
+        transform-origin: 0 0 !important;
+    }
+
+    .input-field span {
+        display: block;
+        color: black;
+        font-size: 1.3rem;
+    }
+
+    span a {
+        text-decoration: none;
+        color: black !important;
+    }
+</style>
+<div class="content">
+    <div class="welcome">
+        <h2>Welcome to Ancestor Culture</h2>
+        <p>We are excited for you to get started. First, you need to log in using the following credentials:</p>
+        <a href="{{clientAppURL}}/auth/login">Log In</a>
+    </div>
+    <div class="credential-group">
+        <div class="input-field">
+            <label for="email">Email</label>
+            <span id="email">{{email}}</span>
+        </div>
+        <div class="input-field">
+            <label for="password">Password</label>
+            <span id="password">{{password}}</span>
+        </div>
+    </div>
+</div>

@@ -10,10 +10,11 @@ import { warn } from 'console';
 import { MahUserModule } from './controllers/user/mah-user/mah-user.module';
 import { ProjectModule } from './controllers/anscestry/project/project.module';
 import { SubjectModule } from './controllers/anscestry/subject/subject.module';
+import { FamilyTimelineModule } from './controllers/anscestry/family-timeline/family-timeline.module';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
-    app.enableCors({ origin: CLIENT_APP, credentials: true });
+    app.enableCors({ origin: true, credentials: true });
     app.setGlobalPrefix('api/v1');
     app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
     app.use(helmet());
@@ -40,7 +41,7 @@ async function bootstrap() {
         .setVersion('1.0')
         .build();
     const document = SwaggerModule.createDocument(app, options, {
-        include: [MahUserModule, ProjectModule, SubjectModule]
+        include: [MahUserModule, ProjectModule, SubjectModule, FamilyTimelineModule]
     });
     SwaggerModule.setup('api', app, document);
     await app.listen(PORT || 3000);

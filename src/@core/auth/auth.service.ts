@@ -5,7 +5,7 @@ import axios from 'axios';
 import { sign, verify } from 'jsonwebtoken';
 import * as CryptoJS from 'crypto-js';
 import { IUser } from 'src/controllers/user/mah-user/interfaces/user.interface';
-import { JWT_REFRESH_SECRET, JWT_SECRET, REFRESH_TOKEN_EXPIRY_TIME, TOKEN_EXPIRY_TIME, CRYPTO_REFRESH_SECRET } from '../config';
+import { JWT_REFRESH_SECRET, JWT_SECRET, REFRESH_TOKEN_EXPIRY_TIME, TOKEN_EXPIRY_TIME, CRYPTO_REFRESH_SECRET, JWT_RESET_PASSWORD_SECRET, RESET_PASSWORD_TOKEN_EXPIRY_TIME } from '../config';
 import { Request, Response } from 'express';
 import { IRefreshToken } from './interfaces/refresh-token.interface';
 import { IJwtPayload } from './interfaces/jwt-payload.interface';
@@ -28,6 +28,10 @@ export class AuthService {
 
     createAccessToken(userId: string) {
         return sign({ userId }, JWT_SECRET, { expiresIn: TOKEN_EXPIRY_TIME });
+    }
+
+    createResetPasswordToken(email: string) {
+        return sign({ email }, JWT_RESET_PASSWORD_SECRET, { expiresIn: RESET_PASSWORD_TOKEN_EXPIRY_TIME });
     }
 
     async createRefreshToken(req: Request, userId: string) {
@@ -143,12 +147,16 @@ export class AuthService {
         return verify(token, secret);
     }
 
-    setCookie(refreshToken: string, res: Response) {
+    setRefreshTokenCookie(refreshToken: string, res: Response) {
         const cookieOptions = {
             httpOnly: true,
             expires: new Date(Date.now() + 60 * 60 * 1000)
         };
-        res.cookie('rtknfam', refreshToken, cookieOptions);
+        this.setCookie('rtknfam', refreshToken, cookieOptions, res);
+    }
+
+    setCookie(name: string, payload: string, option: any, res: Response) {
+        res.cookie(name, payload, option);
         res.setHeader('Access-Control-Allow-Credentials', 'true');
     }
 

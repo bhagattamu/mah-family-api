@@ -1,5 +1,6 @@
 import { HookNextFunction, Schema } from 'mongoose';
 import { hash } from 'bcrypt';
+import { BlockType } from 'src/@core/config/block.enum';
 
 export const MahUserSchema = new Schema(
     {
@@ -23,6 +24,7 @@ export const MahUserSchema = new Schema(
         },
         phone: {
             type: String,
+            unique: true,
             required: true
         },
         password: {
@@ -49,12 +51,22 @@ export const MahUserSchema = new Schema(
             default: 0
         },
         block: {
-            type: Boolean,
-            default: false
-        },
-        blockExpires: {
-            type: Date,
-            default: Date.now
+            status: {
+                type: Boolean,
+                default: false
+            },
+            count: {
+                type: Number,
+                default: 0
+            },
+            type: {
+                type: String,
+                default: BlockType.NO
+            },
+            blockExpires: {
+                type: Date,
+                default: Date.now
+            }
         },
         resetPasswordToken: {
             type: String,
@@ -71,11 +83,24 @@ export const MahUserSchema = new Schema(
     }
 );
 
+MahUserSchema.set('toObject', { virtuals: true });
+MahUserSchema.set('toJSON', { virtuals: true });
+MahUserSchema.virtual('isBlock').get(function() {
+    if (this.block.status || new Date(this.block.blockExpires) > new Date()) {
+        return true;
+    } else {
+        return false;
+    }
+});
+
+MahUserSchema.virtual('fullName').get(function() {
+    return `${this.firstName} ${this.lastName}`;
+});
+
 MahUserSchema.pre('save', async function(next: HookNextFunction) {
     try {
         if (this.isModified('password')) {
             this['password'] = await hash(this['password'], 10);
-            return next();
         }
         return next();
     } catch (err) {
