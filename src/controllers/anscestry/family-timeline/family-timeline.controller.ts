@@ -52,7 +52,7 @@ export class FamilyTimelineController {
             .setMiscellaneous(null);
     }
 
-    @Get(':timelineId')
+    @Get(':timelineProjectId')
     @HttpCode(HttpStatus.OK)
     @UseGuards(RolesGuard)
     @Roles(Role.ADMIN, Role.USER)
@@ -63,8 +63,8 @@ export class FamilyTimelineController {
     })
     @ApiOperation({ summary: 'Get timeline from timeline id.' })
     @ApiOkResponse({ description: 'Individual Timeline fetched successfully' })
-    async getTimelineProjectDetail(@Param('timelineId') timelineId: string) {
-        return new Response(true, await this.familyTimelineService.getTimelineProjectDetail(timelineId))
+    async getTimelineProjectDetail(@Param('timelineProjectId') timelineProjectId: string) {
+        return new Response(true, await this.familyTimelineService.getTimelineProjectDetail(timelineProjectId))
             .setStatus(HttpStatus.OK)
             .setMessage(['TIMELINE_FETCHED'])
             .setMiscellaneous(null);

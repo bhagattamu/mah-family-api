@@ -23,7 +23,7 @@ export const FamilyTimelineSchema = new Schema({
         ref: 'mah-user',
         required: true
     },
-    timestamp: {
+    date: {
         type: Date,
         required: true
     },

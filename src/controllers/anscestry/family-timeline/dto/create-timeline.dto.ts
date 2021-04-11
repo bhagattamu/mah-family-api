@@ -26,7 +26,7 @@ export class CreateTimelineDto {
         description: 'Timestamp of event'
     })
     @IsNotEmpty()
-    readonly timestamp: Date;
+    readonly date: Date;
 
     @ApiProperty({
         example: 'timeline project id',

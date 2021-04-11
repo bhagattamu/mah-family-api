@@ -6,7 +6,7 @@ export interface IFamilyTimelineWithDoc extends Document {
     subject: string;
     events: Array<string> | Array<IFamEvent>;
     createdBy?: string;
-    timestamp: Date;
+    date: Date;
     deleted?: boolean;
 }
 
@@ -15,6 +15,6 @@ export interface IFamilyTimeline {
     subject: string;
     events: Array<string> | Array<IFamEvent>;
     createdBy?: string;
-    timestamp: Date;
+    date: Date;
     deleted?: boolean;
 }

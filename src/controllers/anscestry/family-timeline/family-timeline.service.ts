@@ -21,6 +21,7 @@ export class FamilyTimelineService {
     ) {}
 
     async createFamilyTimelineProject(req: Request, createFamilyTimelineProjectDto: CreateFamilyTimelineProjectDto) {
+        console.log(req.user);
         createFamilyTimelineProjectDto['createdBy'] = req.user['_id'];
         return await (await new this.FamilyTimelineProjectModel(createFamilyTimelineProjectDto).save()).populate('createdBy', 'firstName lastName').execPopulate();
     }
@@ -90,7 +91,7 @@ export class FamilyTimelineService {
     }
 
     async getTimelinePointById(timelineProjectId: string, pointId: string) {
-        return await this.FamilyTimelineModel.findOne({ _id: pointId, timelineProject: timelineProjectId, deleted: false }).populate('event subject');
+        return await this.FamilyTimelineModel.findOne({ _id: pointId, timelineProject: timelineProjectId, deleted: false }).populate('events subject');
     }
 
     async updateTimelinePointById(req: Request, pointId: string, updateTimelineDto: UpdateTimelineDto) {
