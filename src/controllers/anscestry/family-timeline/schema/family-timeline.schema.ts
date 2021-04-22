@@ -6,6 +6,10 @@ export const FamilyTimelineSchema = new Schema({
         ref: 'subject',
         required: true
     },
+    title: {
+        type: String,
+        required: true
+    },
     events: [
         {
             type: Types.ObjectId,

@@ -34,5 +34,6 @@ export interface IUserResponse {
     phone: string;
     roles: Array<string>;
     isBlock: boolean;
+    autoPassword: boolean;
     fullName?: string;
 }

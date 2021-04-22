@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post, Put, Req, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiHeader, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Response } from 'src/@core/response';
 import { CreateProjectDto } from './dto/create-project.dto';
@@ -53,6 +53,14 @@ export class ProjectController {
         return new Response(true, await this.projectService.findProjectById(projectId))
             .setStatus(HttpStatus.OK)
             .setMessage(['FETCHED_PROJECT'])
+            .setMiscellaneous(null);
+    }
+
+    @Put(':projectId')
+    async updateProjectById(@Param('projectId') projectId: string, @Body() updateProjectDto: CreateProjectDto) {
+        return new Response(true, await this.projectService.updateProjectById(projectId, updateProjectDto))
+            .setStatus(HttpStatus.OK)
+            .setMessage(['UPDATED_PROJECT'])
             .setMiscellaneous(null);
     }
 }

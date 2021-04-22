@@ -21,6 +21,14 @@ export class UpdateTimelineDto {
     eventDatas: Array<UpdateFamilyEventDto>;
 
     @ApiProperty({
+        example: 'Title of timeline',
+        description: 'Title'
+    })
+    @IsNotEmpty()
+    @IsString()
+    readonly title: string;
+
+    @ApiProperty({
         example: 'timeline project id',
         description: 'Timeline Project id'
     })

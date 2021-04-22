@@ -79,3 +79,10 @@ export const SubjectSchema = new Schema(
         timestamps: true
     }
 );
+
+SubjectSchema.set('toObject', { virtuals: true });
+SubjectSchema.set('toJSON', { virtuals: true });
+
+SubjectSchema.virtual('fullName').get(function() {
+    return `${this.firstName} ${this.lastName}`;
+});

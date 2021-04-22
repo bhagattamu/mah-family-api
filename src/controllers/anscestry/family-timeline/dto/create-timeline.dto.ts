@@ -22,6 +22,14 @@ export class CreateTimelineDto {
     eventDatas: Array<CreateFamilyEventDto>;
 
     @ApiProperty({
+        example: 'Title of timeline',
+        description: 'Title'
+    })
+    @IsNotEmpty()
+    @IsString()
+    readonly title: string;
+
+    @ApiProperty({
         example: Date.now,
         description: 'Timestamp of event'
     })

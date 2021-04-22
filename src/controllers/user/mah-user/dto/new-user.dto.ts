@@ -44,6 +44,15 @@ export class NewUserDto {
     @IsEmail()
     readonly email: string;
 
+    // @ApiProperty({
+    //     example: 'P@$$w0rd123',
+    //     description: 'Password of the user'
+    // })
+    // @IsNotEmpty()
+    // @IsString()
+    // @MinLength(5)
+    // readonly password: string;
+
     @ApiProperty({
         example: '+9779819122180',
         description: 'Phone number of user',

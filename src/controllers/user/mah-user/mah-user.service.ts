@@ -15,6 +15,7 @@ import { BlockType } from 'src/@core/config/block.enum';
 import { IUserRecovery } from './interfaces/user-recovery.interface';
 import { ChangePasswordByCodeDto } from './dto/change-password-recovery-code.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
 
 @Injectable()
 export class MahUserService {
@@ -67,7 +68,11 @@ export class MahUserService {
     }
 
     async authUserByToken(req: Request) {
-        return await this.authService.isAuthenticated(req);
+        const auth = await this.authService.isAuthenticated(req);
+        if (auth) {
+            return { ...this.buildUserRes(req.user) };
+        }
+        return auth;
     }
 
     async logoutUser(req: Request, res: Response) {
@@ -205,6 +210,7 @@ export class MahUserService {
                     const user = await this.UserModel.findOne({ _id: resetPasswordDto.user });
                     user.password = resetPasswordDto.password;
                     user.loginAttempts = 0;
+                    user.autoPassword = false;
                     await user.save();
                     return await this.loginUser(req, res, user);
                 }
@@ -214,6 +220,15 @@ export class MahUserService {
         } else {
             this.recoveryCodeExpired();
         }
+    }
+
+    async changePassword(changePasswordDto: ChangePasswordDto, req: Request) {
+        const user = await this.UserModel.findById(req.user['_id']);
+        await this.checkCredentials(user, changePasswordDto.currentPassword);
+        user.password = changePasswordDto.password;
+        user.autoPassword = false;
+        user.loginAttempts = 0;
+        return { ...this.buildUserRes(await user.save()) };
     }
 
     recoveryCodeExpired() {
@@ -273,7 +288,16 @@ export class MahUserService {
     }
 
     async verifyUser(userId: string) {
-        return this.buildUserRes(await this.UserModel.findByIdAndUpdate(userId, { verified: true }).exec());
+        const user = await this.UserModel.findById(userId);
+        const randomPassword = Math.random()
+            .toString(36)
+            .slice(-8);
+        user.password = randomPassword;
+        user.verified = true;
+        await user.save();
+        const userRes = this.buildUserRes(user);
+        await this.mailService.sendMail(user.email, 'You have been verified by admin.', 'Account verified', MailType.ACCOUNT_VERIFY, { email: user.email, password: randomPassword, clientAppURL: CLIENT_APP });
+        return userRes;
     }
 
     async checkEmail(email: string) {
@@ -289,15 +313,22 @@ export class MahUserService {
         user.verification = v4();
     }
 
-    buildUserRes(user: IUser): IUserResponse {
+    async getAllUsers(req: Request) {
+        const query = req.query;
+        return await this.UserModel.find({ ...query, roles: { $ne: 'admin' } }).select('firstName lastName email phone roles isBlock');
+    }
+
+    buildUserRes(user: IUser | any): IUserResponse {
         return {
             id: user.id,
             firstName: user.firstName,
             lastName: user.lastName,
+            fullName: user.fullName,
             email: user.email,
             phone: user.phone,
             roles: user.roles,
-            isBlock: user.isBlock
+            isBlock: user.isBlock,
+            autoPassword: user.autoPassword
         };
     }
 }

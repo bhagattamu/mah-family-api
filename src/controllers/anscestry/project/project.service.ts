@@ -32,4 +32,8 @@ export class ProjectService {
             .sort({ pinned: -1 })
             .exec();
     }
+
+    async updateProjectById(projectId: string, updateProjectDto: CreateProjectDto) {
+        return await this.ProjectModel.updateOne({ _id: projectId }, updateProjectDto);
+    }
 }

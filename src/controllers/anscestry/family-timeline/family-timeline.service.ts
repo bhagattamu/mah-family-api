@@ -86,7 +86,7 @@ export class FamilyTimelineService {
 
     async getAllTimelinePointOfProject(timelineProjectId: string) {
         return await this.FamilyTimelineModel.find({ timelineProject: timelineProjectId, deleted: false })
-            .sort({ timestamp: -1 })
+            .sort({ date: -1 })
             .populate('events subject');
     }
 

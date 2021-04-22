@@ -7,6 +7,7 @@ import { RolesGuard } from 'src/@core/auth/guards/roles.guard';
 import { Response as MyResponse } from 'src/@core/response';
 import { IResponse } from 'src/@core/response/response.interface';
 import { ChangePasswordByCodeDto } from './dto/change-password-recovery-code.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
 import { LoginUserDto } from './dto/login-user.dto';
 import { NewUserDto } from './dto/new-user.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
@@ -31,6 +32,24 @@ export class MahUserController {
         return new MyResponse(true, await this.userService.createUser(newUserDto))
             .setStatus(HttpStatus.CREATED)
             .setMessage(['USER_REGISTERED'])
+            .setMiscellaneous(null);
+    }
+
+    @UseGuards(RolesGuard)
+    @Get('all')
+    @HttpCode(HttpStatus.OK)
+    @Roles(Role.ADMIN)
+    @ApiBearerAuth()
+    @ApiHeader({
+        name: 'authorization',
+        description: 'Token send to api from header'
+    })
+    @ApiOperation({ summary: 'Get all users' })
+    @ApiOkResponse({ description: 'Fetched users successfully' })
+    async getAllUsers(@Req() req: Request) {
+        return new MyResponse(true, await this.userService.getAllUsers(req))
+            .setMessage(['FETCHED_ALL_USERS'])
+            .setStatus(HttpStatus.OK)
             .setMiscellaneous(null);
     }
 
@@ -178,6 +197,23 @@ export class MahUserController {
     @ApiOkResponse({ description: 'Password changed successfully', type: LogoutResponse })
     async resetPassword(@Body() resetPasswordDto: ResetPasswordDto, @Req() req: Request, @Res({ passthrough: true }) res: Response) {
         return new MyResponse(true, await this.userService.resetPassword(resetPasswordDto, req, res))
+            .setStatus(HttpStatus.OK)
+            .setMessage(['PASSWORD_CHANGED'])
+            .setMiscellaneous(null);
+    }
+
+    @Put('change-password')
+    @HttpCode(HttpStatus.OK)
+    @Roles(Role.ADMIN, Role.USER)
+    @ApiBearerAuth()
+    @ApiHeader({
+        name: 'authorization',
+        description: 'Token send to api from header'
+    })
+    @ApiOperation({ summary: 'Change password' })
+    @ApiOkResponse({ description: 'Password changed successfully', type: LogoutResponse })
+    async changePassword(@Body() changePasswordDto: ChangePasswordDto, @Req() req: Request) {
+        return new MyResponse(true, await this.userService.changePassword(changePasswordDto, req))
             .setStatus(HttpStatus.OK)
             .setMessage(['PASSWORD_CHANGED'])
             .setMiscellaneous(null);
