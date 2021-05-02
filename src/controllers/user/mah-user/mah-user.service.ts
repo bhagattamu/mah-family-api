@@ -16,10 +16,22 @@ import { IUserRecovery } from './interfaces/user-recovery.interface';
 import { ChangePasswordByCodeDto } from './dto/change-password-recovery-code.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
+import { UpdateBasicInformationDto } from './dto/update-basic-information.dto';
+import { IUserFamily, IUserLanguage } from './interfaces/user-family.interface';
+import { CreateUserFamilyDto } from './dto/create-user-family.dto';
+import { CreateLanguageDto } from 'src/controllers/user/mah-user/dto/create-user-language.dto';
+import { LanguageService } from 'src/controllers/anscestry/language/language.service';
 
 @Injectable()
 export class MahUserService {
-    constructor(@InjectModel('mah-user') private readonly UserModel: Model<IUser>, @InjectModel('user-recovery') private readonly UserRecoveryModel: Model<IUserRecovery>, private readonly authService: AuthService, private mailService: MailService) {}
+    constructor(
+        @InjectModel('mah-user') private readonly UserModel: Model<IUser>,
+        @InjectModel('user-recovery') private readonly UserRecoveryModel: Model<IUserRecovery>,
+        @InjectModel('user-family') private readonly UserFamilyModel: Model<IUserFamily>,
+        private readonly authService: AuthService,
+        private readonly mailService: MailService,
+        private readonly languageService: LanguageService
+    ) {}
 
     async createUser(newUserDto: NewUserDto) {
         const user = new this.UserModel(newUserDto);
@@ -318,9 +330,15 @@ export class MahUserService {
         return await this.UserModel.find({ ...query, roles: { $ne: 'admin' } }).select('firstName lastName email phone roles isBlock');
     }
 
+    async updateBasicInformation(basicInformationDto: UpdateBasicInformationDto, req: Request, userPicture: string) {
+        const userId = req.user['_id'];
+        await this.UserModel.updateOne({ _id: userId }, { firstName: basicInformationDto.firstName, lastName: basicInformationDto.lastName, profileImageURL: userPicture ? userPicture : req.user['profileImageURL'] });
+        return this.buildUserRes(await this.UserModel.findById(userId));
+    }
+
     buildUserRes(user: IUser | any): IUserResponse {
         return {
-            id: user.id,
+            id: user._id,
             firstName: user.firstName,
             lastName: user.lastName,
             fullName: user.fullName,
@@ -328,7 +346,59 @@ export class MahUserService {
             phone: user.phone,
             roles: user.roles,
             isBlock: user.isBlock,
-            autoPassword: user.autoPassword
+            autoPassword: user.autoPassword,
+            profileImageURL: user.profileImageURL
         };
+    }
+
+    /**
+     * User Family functions
+     */
+
+    async createUserFamily(req: Request, createUserFamilyDto: CreateUserFamilyDto) {
+        const userId = req.user['_id'];
+        const userFamily = await this.UserFamilyModel.findOne({ user: userId });
+        if (userFamily) {
+            await userFamily.updateOne(createUserFamilyDto);
+            return await this.UserFamilyModel.findOne({ user: userId });
+        } else {
+            createUserFamilyDto['user'] = userId;
+            const newUserFamily = new this.UserFamilyModel(createUserFamilyDto);
+            return await newUserFamily.save();
+        }
+    }
+
+    async getUserFamily(req: Request) {
+        return await this.UserFamilyModel.findOne({ user: req.user['_id'] }).populate('language.motherLanguage language.nationalLanguage');
+    }
+
+    async createUserLanguage(req: Request, createUserLanguage: CreateLanguageDto) {
+        const userId = req.user['_id'];
+        const userFamily = await this.UserFamilyModel.findOne({ user: userId });
+        if (userFamily) {
+            const languageDto = await this.buildCreateUserLanguageDto(req, createUserLanguage);
+            await userFamily.updateOne({ language: languageDto });
+            return await this.UserFamilyModel.findOne({ user: userId });
+        } else {
+            throw new NotFoundException('FAMILY_NOT_FOUND');
+        }
+    }
+
+    async buildCreateUserLanguageDto(req: Request, createUserLanguage: CreateLanguageDto): Promise<IUserLanguage> {
+        return {
+            motherLanguage: await this.getLanguageId(req, createUserLanguage.motherLanguage),
+            nationalLanguage: await this.getLanguageId(req, createUserLanguage.nationalLanguage),
+            others: []
+        };
+    }
+
+    async getLanguageId(req: Request, languageName: string): Promise<string> {
+        const language = await this.languageService.getLanguageByName(languageName);
+        if (language) {
+            return language._id;
+        } else {
+            const newLanguage = await this.languageService.createNewLanguage(req, { languageName: languageName, languageDescription: '', origin: { location: { longitude: 0, latitude: 0, Address: '' }, description: '' } });
+            return newLanguage._id;
+        }
     }
 }

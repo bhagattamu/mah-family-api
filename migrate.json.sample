@@ -1,0 +1,4 @@
+{
+  "dbConnectionUri": "mongodb://localhost:27017/mah",
+  "migrationsDir": "ancestor-culture-migrations/admin-user-migrate/migrations"
+}

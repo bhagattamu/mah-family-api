@@ -1,20 +1,25 @@
-import { BadRequestException, Body, Controller, Get, HttpCode, HttpStatus, Param, Post, Put, Req, Res, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, HttpCode, HttpStatus, Param, Post, Put, Req, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiCreatedResponse, ApiHeader, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Request, Response } from 'express';
+import { diskStorage } from 'multer';
 import { Role } from 'src/@core/auth/guards/role.enum';
 import { Roles } from 'src/@core/auth/guards/roles.decorator';
 import { RolesGuard } from 'src/@core/auth/guards/roles.guard';
 import { Response as MyResponse } from 'src/@core/response';
 import { IResponse } from 'src/@core/response/response.interface';
+import { editFileName, getProfileDestination, imageFileFilter } from 'src/@core/utils/file-upload.utils';
 import { ChangePasswordByCodeDto } from './dto/change-password-recovery-code.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
+import { CreateUserFamilyDto } from './dto/create-user-family.dto';
+import { CreateLanguageDto } from './dto/create-user-language.dto';
 import { LoginUserDto } from './dto/login-user.dto';
 import { NewUserDto } from './dto/new-user.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
-import { RequestRecoveryValidDto } from './dto/request-recovery-valid.dto';
 import { RequestRecoveryDto } from './dto/request-recovery.dto';
 import { ReSendRequestRecoveryDto } from './dto/resend-request-recovery.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
+import { UpdateBasicInformationDto } from './dto/update-basic-information.dto';
 import { CreateUserResponse, LoginResponse, LogoutResponse, RefreshTokenResponse, VerifyUserResponse } from './dto/user-response.dto';
 import { MahUserService } from './mah-user.service';
 
@@ -35,6 +40,32 @@ export class MahUserController {
             .setMiscellaneous(null);
     }
 
+    @Put('basic-information')
+    @UseInterceptors(
+        FileInterceptor('userPicture', {
+            storage: diskStorage({
+                destination: getProfileDestination,
+                filename: editFileName
+            }),
+            fileFilter: imageFileFilter
+        })
+    )
+    @HttpCode(HttpStatus.OK)
+    @Roles(Role.ADMIN, Role.USER)
+    @ApiBearerAuth()
+    @ApiHeader({
+        name: 'authorization',
+        description: 'Token send to api from header'
+    })
+    @ApiOperation({ summary: 'Update basic information' })
+    @ApiOkResponse({ description: 'Updated basic information Successfully', type: CreateUserResponse })
+    async updateBasicInformation(@Body() basicInformationDto: UpdateBasicInformationDto, @UploadedFile() file: Express.Multer.File, @Req() req: Request) {
+        return new MyResponse(true, await this.userService.updateBasicInformation(basicInformationDto, req, file?.filename))
+            .setStatus(HttpStatus.OK)
+            .setMessage(['UPDATED_BASIC_INFORMATION'])
+            .setMiscellaneous(null);
+    }
+
     @UseGuards(RolesGuard)
     @Get('all')
     @HttpCode(HttpStatus.OK)
@@ -49,6 +80,24 @@ export class MahUserController {
     async getAllUsers(@Req() req: Request) {
         return new MyResponse(true, await this.userService.getAllUsers(req))
             .setMessage(['FETCHED_ALL_USERS'])
+            .setStatus(HttpStatus.OK)
+            .setMiscellaneous(null);
+    }
+
+    @UseGuards(RolesGuard)
+    @Get()
+    @HttpCode(HttpStatus.OK)
+    @Roles(Role.ADMIN, Role.USER)
+    @ApiBearerAuth()
+    @ApiHeader({
+        name: 'authorization',
+        description: 'Token send to api from header'
+    })
+    @ApiOperation({ summary: 'Get Profile' })
+    @ApiOkResponse({ description: 'Fetched Profile successfully', type: VerifyUserResponse })
+    async getProfile(@Req() req: Request) {
+        return new MyResponse(true, this.userService.buildUserRes(req.user))
+            .setMessage(['FETCHED_PROFILE'])
             .setStatus(HttpStatus.OK)
             .setMiscellaneous(null);
     }
@@ -216,6 +265,61 @@ export class MahUserController {
         return new MyResponse(true, await this.userService.changePassword(changePasswordDto, req))
             .setStatus(HttpStatus.OK)
             .setMessage(['PASSWORD_CHANGED'])
+            .setMiscellaneous(null);
+    }
+
+    /**
+     * User Family API
+     */
+
+    @Post('family')
+    @HttpCode(HttpStatus.CREATED)
+    @Roles(Role.ADMIN, Role.USER)
+    @ApiBearerAuth()
+    @ApiHeader({
+        name: 'authorization',
+        description: 'Token send to api from header'
+    })
+    @ApiOperation({ summary: 'Create User Family / Update if already exist' })
+    @ApiOkResponse({ description: 'User family added/updated successfully', type: LogoutResponse })
+    async createUserFamily(@Body() createUserFamilyDto: CreateUserFamilyDto, @Req() req: Request) {
+        return new MyResponse(true, await this.userService.createUserFamily(req, createUserFamilyDto))
+            .setStatus(HttpStatus.CREATED)
+            .setMessage(['ADDED_USER_FAMILY'])
+            .setMiscellaneous(null);
+    }
+
+    @Get('family')
+    @HttpCode(HttpStatus.OK)
+    @Roles(Role.ADMIN, Role.USER)
+    @ApiBearerAuth()
+    @ApiHeader({
+        name: 'authorization',
+        description: 'Token send to api from header'
+    })
+    @ApiOperation({ summary: 'Fetch User Family' })
+    @ApiOkResponse({ description: 'User family fetched successfully', type: LogoutResponse })
+    async getUserFamily(@Req() req: Request) {
+        return new MyResponse(true, await this.userService.getUserFamily(req))
+            .setStatus(HttpStatus.OK)
+            .setMessage(['FETCHED_USER_FAMILY'])
+            .setMiscellaneous(null);
+    }
+
+    @Post('language')
+    @HttpCode(HttpStatus.CREATED)
+    @Roles(Role.ADMIN, Role.USER)
+    @ApiBearerAuth()
+    @ApiHeader({
+        name: 'authorization',
+        description: 'Token send to api from header'
+    })
+    @ApiOperation({ summary: 'Create User Language / Update if already exist' })
+    @ApiOkResponse({ description: 'User language added/updated successfully', type: LogoutResponse })
+    async createUserLanguage(@Body() createUserLanguageDto: CreateLanguageDto, @Req() req: Request) {
+        return new MyResponse(true, await this.userService.createUserLanguage(req, createUserLanguageDto))
+            .setStatus(HttpStatus.CREATED)
+            .setMessage(['ADDED_USER_LANGUAGE'])
             .setMiscellaneous(null);
     }
 }

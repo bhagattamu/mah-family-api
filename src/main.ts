@@ -11,6 +11,7 @@ import { MahUserModule } from './controllers/user/mah-user/mah-user.module';
 import { ProjectModule } from './controllers/anscestry/project/project.module';
 import { SubjectModule } from './controllers/anscestry/subject/subject.module';
 import { FamilyTimelineModule } from './controllers/anscestry/family-timeline/family-timeline.module';
+import { LanguageModule } from './controllers/anscestry/language/language.module';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
@@ -41,7 +42,7 @@ async function bootstrap() {
         .setVersion('1.0')
         .build();
     const document = SwaggerModule.createDocument(app, options, {
-        include: [MahUserModule, ProjectModule, SubjectModule, FamilyTimelineModule]
+        include: [MahUserModule, ProjectModule, SubjectModule, FamilyTimelineModule, LanguageModule]
     });
     SwaggerModule.setup('api', app, document);
     await app.listen(PORT || 3000);

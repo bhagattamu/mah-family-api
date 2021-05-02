@@ -1,4 +1,4 @@
-import { Schema } from 'mongoose';
+import { Schema, Types } from 'mongoose';
 
 export const LanguageSchema = new Schema({
     languageName: {
@@ -9,6 +9,33 @@ export const LanguageSchema = new Schema({
         type: String
     },
     origin: {
-        type: String
-    }
+        location: {
+            longitude: {
+                type: Number
+            },
+            latitude: {
+                type: Number
+            },
+            address: {
+                type: String
+            }
+        },
+        description: {
+            type: String
+        }
+    },
+    createdBy: {
+        type: Types.ObjectId,
+        ref: 'user'
+    },
+    status: {
+        type: Boolean,
+        default: false
+    },
+    supervisors: [
+        {
+            type: Types.ObjectId,
+            ref: 'user'
+        }
+    ]
 });

@@ -37,7 +37,8 @@ lerna-debug.log*
 .gitignore
 package-lock.json
 .env
-uploads/projects
+uploads
 .dockerignore
 docker-compose.yml
 Dockerfile
+migrate.json

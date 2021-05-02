@@ -24,6 +24,7 @@ export interface IUser extends Document {
     autoPassword?: boolean;
     reCaptchaToken?: string;
     fullName?: string;
+    profileImageURL?: string;
 }
 
 export interface IUserResponse {
@@ -36,4 +37,5 @@ export interface IUserResponse {
     isBlock: boolean;
     autoPassword: boolean;
     fullName?: string;
+    profileImageURL: string;
 }

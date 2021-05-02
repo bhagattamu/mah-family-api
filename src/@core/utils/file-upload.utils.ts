@@ -13,9 +13,17 @@ export const imageFileFilter = (req, file, callback) => {
 export const getProjectDestination = (req, file, callback) => {
     const path = process.cwd() + `/uploads/projects/project-${req.body.projectId}/`;
     if (!fs.existsSync(path)) {
-        fs.mkdirSync(path);
+        fs.mkdirSync(path, { recursive: true });
     }
     callback(null, `./uploads/projects/project-${req.body.projectId}`);
+};
+
+export const getProfileDestination = (req, file, callback) => {
+    const path = process.cwd() + `/uploads/users/${req.user._id}/`;
+    if (!fs.existsSync(path)) {
+        fs.mkdirSync(path, { recursive: true });
+    }
+    callback(null, `./uploads/users/${req.user._id}`);
 };
 
 export const editFileName = (req, file, callback) => {

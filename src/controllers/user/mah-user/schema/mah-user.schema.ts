@@ -35,6 +35,9 @@ export const MahUserSchema = new Schema(
             type: [String],
             default: ['user']
         },
+        profileImageURL: {
+            type: String
+        },
         verification: {
             type: String
         },
