@@ -37,7 +37,10 @@ export class MahUserService {
     async createUser(newUserDto: NewUserDto) {
         const user = new this.UserModel(newUserDto);
         if (await this.checkEmail(user.email)) {
-            throw new ConflictException(Messages.ALREADY_REGISTERED);
+            throw new ConflictException(Messages.EMAIL_ALREADY_REGISTERED);
+        }
+        if (await this.checkPhone(user.phone)) {
+            throw new ConflictException(Messages.PHONE_ALREADY_REGISTERED);
         }
         this.setVerificationInfo(user);
         user.password = Math.random()
@@ -317,6 +320,15 @@ export class MahUserService {
 
     async checkEmail(email: string) {
         const user = await this.UserModel.findOne({ email: email }).exec();
+        if (user) {
+            return user;
+        } else {
+            return null;
+        }
+    }
+
+    async checkPhone(phone: string) {
+        const user = await this.UserModel.findOne({ phone: phone }).exec();
         if (user) {
             return user;
         } else {
