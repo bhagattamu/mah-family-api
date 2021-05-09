@@ -30,7 +30,7 @@ export class FamilyTimelineController {
     async createFamilyTimelineProject(@Req() req: Request, @Body() createFamilyTimelineProjectDto: CreateFamilyTimelineProjectDto) {
         return new Response(true, await this.familyTimelineService.createFamilyTimelineProject(req, createFamilyTimelineProjectDto))
             .setStatus(HttpStatus.CREATED)
-            .setMessage(['CREATED_TIMELINE_PROJECT'])
+            .setMessage('CREATED_TIMELINE_PROJECT')
             .setMiscellaneous(null);
     }
 
@@ -48,7 +48,7 @@ export class FamilyTimelineController {
     async getTimelineProjects(@Req() req: Request) {
         return new Response(true, await this.familyTimelineService.getAllTimelineProject(req.query.projectId.toString()))
             .setStatus(HttpStatus.OK)
-            .setMessage(['ALL_TIMELINE_PROJECT_OF_PROJECT_FETCHED'])
+            .setMessage('ALL_TIMELINE_PROJECT_OF_PROJECT_FETCHED')
             .setMiscellaneous(null);
     }
 
@@ -66,7 +66,7 @@ export class FamilyTimelineController {
     async getTimelineProjectDetail(@Param('timelineProjectId') timelineProjectId: string) {
         return new Response(true, await this.familyTimelineService.getTimelineProjectDetail(timelineProjectId))
             .setStatus(HttpStatus.OK)
-            .setMessage(['TIMELINE_FETCHED'])
+            .setMessage('TIMELINE_FETCHED')
             .setMiscellaneous(null);
     }
 
@@ -84,7 +84,7 @@ export class FamilyTimelineController {
     async updateFamilyTimelineProject(@Body() updateFamilyTimelineProjectDto: UpdateFamilyTimelineProjectDto, @Param('timelineId') timelineId: string) {
         return new Response(true, await this.familyTimelineService.updateTimelineProject(timelineId, updateFamilyTimelineProjectDto))
             .setStatus(HttpStatus.OK)
-            .setMessage(['UPDATED_TIMELINE_PROJECT'])
+            .setMessage('UPDATED_TIMELINE_PROJECT')
             .setMiscellaneous(null);
     }
 
@@ -102,7 +102,7 @@ export class FamilyTimelineController {
     async createFamilyTimelinePoint(@Req() req: Request, @Body() createFamilyTimelineDto: CreateTimelineDto) {
         return new Response(true, await this.familyTimelineService.createFamilyTimelinePoint(req, createFamilyTimelineDto))
             .setStatus(HttpStatus.CREATED)
-            .setMessage(['CREATED_POINT_IN_TIMELINE'])
+            .setMessage('CREATED_POINT_IN_TIMELINE')
             .setMiscellaneous(null);
     }
 
@@ -120,7 +120,7 @@ export class FamilyTimelineController {
     async getTimeline(@Req() req: Request) {
         return new Response(true, await this.familyTimelineService.getAllTimelinePointOfProject(req.query.timelineProjectId.toString()))
             .setStatus(HttpStatus.OK)
-            .setMessage(['ALL_TIMELINE_OF_PROJECT_FETCHED'])
+            .setMessage('ALL_TIMELINE_OF_PROJECT_FETCHED')
             .setMiscellaneous(null);
     }
 
@@ -138,7 +138,7 @@ export class FamilyTimelineController {
     async getTimelinePointById(@Req() req: Request, @Param('pointId') pointId: string) {
         return new Response(true, await this.familyTimelineService.getTimelinePointById(req.query.timelineProjectId.toString(), pointId))
             .setStatus(HttpStatus.OK)
-            .setMessage(['TIMELINE_POINT_FETCHED'])
+            .setMessage('TIMELINE_POINT_FETCHED')
             .setMiscellaneous(null);
     }
 
@@ -156,7 +156,7 @@ export class FamilyTimelineController {
     async updateFamilyTimelinePoint(@Req() req: Request, @Body() updateFamilyTimelineDto: UpdateTimelineDto, @Param('pointId') pointId: string) {
         return new Response(true, await this.familyTimelineService.updateTimelinePointById(req, pointId, updateFamilyTimelineDto))
             .setStatus(HttpStatus.OK)
-            .setMessage(['UPDATED_POINT_IN_TIMELINE'])
+            .setMessage('UPDATED_POINT_IN_TIMELINE')
             .setMiscellaneous(null);
     }
 
@@ -174,7 +174,7 @@ export class FamilyTimelineController {
     async deleteFamilyTimelinePointById(@Req() req: Request, @Param('pointId') pointId: string) {
         return new Response(true, await this.familyTimelineService.deleteTimelinePointById(req.query.timelineProjectId.toString(), pointId))
             .setStatus(HttpStatus.OK)
-            .setMessage(['DELETED_POINT_IN_TIMELINE'])
+            .setMessage('DELETED_POINT_IN_TIMELINE')
             .setMiscellaneous(null);
     }
 
@@ -192,7 +192,7 @@ export class FamilyTimelineController {
     async deleteFamilyTimelinePointsByProject(@Req() req: Request) {
         return new Response(true, await this.familyTimelineService.deleteTimelinePointsByProject(req.query.timelineProjectId.toString()))
             .setStatus(HttpStatus.OK)
-            .setMessage(['DELETED_TIMELINE_POINTS_OF_PROJECT'])
+            .setMessage('DELETED_TIMELINE_POINTS_OF_PROJECT')
             .setMiscellaneous(null);
     }
 }

@@ -40,7 +40,7 @@ export class SubjectController {
     async createSubject(@Body() createSubjectDto: CreateSubjectDto, @UploadedFile() file: Express.Multer.File, @Req() req: Request) {
         return new Response(true, await this.subjectService.createSubject(createSubjectDto, req, file?.filename))
             .setStatus(HttpStatus.CREATED)
-            .setMessage(['CREATED_SUBJECT'])
+            .setMessage('CREATED_SUBJECT')
             .setMiscellaneous(null);
     }
 
@@ -66,7 +66,7 @@ export class SubjectController {
     async addSpouse(@Body() createSubjectDto: CreateSubjectDto, @Param('subjectId') mateId: string, @UploadedFile() file: Express.Multer.File, @Req() req: Request) {
         return new Response(true, await this.subjectService.createSpouseForSubject(createSubjectDto, mateId, req, file?.filename))
             .setStatus(HttpStatus.CREATED)
-            .setMessage(['CREATED_SPOUSE'])
+            .setMessage('CREATED_SPOUSE')
             .setMiscellaneous(null);
     }
 
@@ -92,7 +92,7 @@ export class SubjectController {
     async createChild(@Body() createChildSubjectDto: CreateChildSubjectDto, @UploadedFile() file: Express.Multer.File, @Param('parentId') firstParent: string, @Req() req: Request) {
         return new Response(true, await this.subjectService.createChildForSubject(createChildSubjectDto, firstParent, req, file?.filename ? file?.filename : ''))
             .setStatus(HttpStatus.CREATED)
-            .setMessage(['CREATED_CHILD'])
+            .setMessage('CREATED_CHILD')
             .setMiscellaneous(null);
     }
 
@@ -109,7 +109,7 @@ export class SubjectController {
     async findSubjectById(@Param('subjectId') subjectId: string, @Req() req: Request) {
         return new Response(true, await this.subjectService.getSubjectById(subjectId, req))
             .setStatus(HttpStatus.OK)
-            .setMessage(['FETCHED_SUBJECT_BY_ID_SUCCESSFULLY'])
+            .setMessage('FETCHED_SUBJECT_BY_ID_SUCCESSFULLY')
             .setMiscellaneous(null);
     }
 
@@ -126,7 +126,7 @@ export class SubjectController {
     async getAllSubjectByProjectId(@Param('projectId') projectId: string, @Req() req: Request) {
         return new Response(true, await this.subjectService.getAllSubjectOfProjectId(projectId, req))
             .setStatus(HttpStatus.OK)
-            .setMessage(['FETCHED_SUBJECT_SUCCESSFULLY'])
+            .setMessage('FETCHED_SUBJECT_SUCCESSFULLY')
             .setMiscellaneous(null);
     }
 
@@ -143,7 +143,7 @@ export class SubjectController {
     async getTreeData(@Param('rootId') rootId: string) {
         return new Response(true, await this.subjectService.getTreeData(rootId))
             .setStatus(HttpStatus.OK)
-            .setMessage(['FETCHED_TREEDATA_SUCCESSFULLY'])
+            .setMessage('FETCHED_TREEDATA_SUCCESSFULLY')
             .setMiscellaneous(null);
     }
 }

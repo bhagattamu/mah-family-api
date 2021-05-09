@@ -28,7 +28,7 @@ export class LanguageController {
     async createNewLanguage(@Body() createLanguageDto: CreateLanguageDto, @Req() req: Request) {
         return new Response(true, await this.languageService.createNewLanguage(req, createLanguageDto))
             .setStatus(HttpStatus.CREATED)
-            .setMessage(['LANGUAGE_CREATED'])
+            .setMessage('LANGUAGE_CREATED')
             .setMiscellaneous(null);
     }
 
@@ -46,7 +46,7 @@ export class LanguageController {
     async getAllLanguage(@Req() req: Request) {
         return new Response(true, await this.languageService.getAllLanguages(req))
             .setStatus(HttpStatus.OK)
-            .setMessage(['FETCHED_LANGUAGES'])
+            .setMessage('FETCHED_LANGUAGES')
             .setMiscellaneous(null);
     }
 
@@ -64,7 +64,7 @@ export class LanguageController {
     async searchLanguage(@Req() req: Request) {
         return new Response(true, await this.languageService.searchLanguageByName(req.query))
             .setStatus(HttpStatus.OK)
-            .setMessage(['FETCHED_LANGUAGE'])
+            .setMessage('FETCHED_LANGUAGE')
             .setMiscellaneous(null);
     }
 
@@ -82,7 +82,7 @@ export class LanguageController {
     async forkLanguage(@Body() forkLanguageDto: ForkLanguageDto, @Req() req: Request) {
         return new Response(true, await this.languageService.forkLanguage(req.user['_id'], forkLanguageDto.language))
             .setStatus(HttpStatus.CREATED)
-            .setMessage(['FORKED_LANGUAGE'])
+            .setMessage('FORKED_LANGUAGE')
             .setMiscellaneous(null);
     }
 
@@ -100,7 +100,7 @@ export class LanguageController {
     async getAllForkedLanguage(@Req() req: Request) {
         return new Response(true, await this.languageService.getAllForkedLanguage(req))
             .setStatus(HttpStatus.OK)
-            .setMessage(['FETCHED_LANGUAGE'])
+            .setMessage('FETCHED_LANGUAGE')
             .setMiscellaneous(null);
     }
 
@@ -118,7 +118,7 @@ export class LanguageController {
     async getLanguageById(@Param('languageId') languageId: string) {
         return new Response(true, await this.languageService.getLanguageById(languageId))
             .setStatus(HttpStatus.OK)
-            .setMessage(['FETCHED_LANGUAGE'])
+            .setMessage('FETCHED_LANGUAGE')
             .setMiscellaneous(null);
     }
 
@@ -136,7 +136,7 @@ export class LanguageController {
     async activateLanguage(@Param('languageId') languageId: string) {
         return new Response(true, await this.languageService.activateLanguage(languageId))
             .setStatus(HttpStatus.OK)
-            .setMessage(['ACTIVATED_LANGUAGE'])
+            .setMessage('ACTIVATED_LANGUAGE')
             .setMiscellaneous(null);
     }
 
@@ -154,7 +154,7 @@ export class LanguageController {
     async deactivateLanguage(@Param('languageId') languageId: string) {
         return new Response(true, await this.languageService.deactivatelanguage(languageId))
             .setStatus(HttpStatus.OK)
-            .setMessage(['DEACTIVATED_LANGUAGE'])
+            .setMessage('DEACTIVATED_LANGUAGE')
             .setMiscellaneous(null);
     }
 }

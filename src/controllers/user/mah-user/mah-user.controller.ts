@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Get, HttpCode, HttpStatus, Param, Post, Put, Req, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, HttpCode, HttpStatus, NotFoundException, Param, Post, Put, Req, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiCreatedResponse, ApiHeader, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Request, Response } from 'express';
@@ -7,6 +7,7 @@ import { Role } from 'src/@core/auth/guards/role.enum';
 import { Roles } from 'src/@core/auth/guards/roles.decorator';
 import { RolesGuard } from 'src/@core/auth/guards/roles.guard';
 import { Response as MyResponse } from 'src/@core/response';
+import { Messages } from 'src/@core/response/error';
 import { IResponse } from 'src/@core/response/response.interface';
 import { editFileName, getProfileDestination, imageFileFilter } from 'src/@core/utils/file-upload.utils';
 import { ChangePasswordByCodeDto } from './dto/change-password-recovery-code.dto';
@@ -36,7 +37,7 @@ export class MahUserController {
     async createUser(@Body() newUserDto: NewUserDto): Promise<IResponse> {
         return new MyResponse(true, await this.userService.createUser(newUserDto))
             .setStatus(HttpStatus.CREATED)
-            .setMessage(['USER_REGISTERED'])
+            .setMessage(Messages.USER_REGISTERED)
             .setMiscellaneous(null);
     }
 
@@ -62,7 +63,7 @@ export class MahUserController {
     async updateBasicInformation(@Body() basicInformationDto: UpdateBasicInformationDto, @UploadedFile() file: Express.Multer.File, @Req() req: Request) {
         return new MyResponse(true, await this.userService.updateBasicInformation(basicInformationDto, req, file?.filename))
             .setStatus(HttpStatus.OK)
-            .setMessage(['UPDATED_BASIC_INFORMATION'])
+            .setMessage(Messages.UPDATED_BASIC_INFORMATION)
             .setMiscellaneous(null);
     }
 
@@ -78,10 +79,14 @@ export class MahUserController {
     @ApiOperation({ summary: 'Get all users' })
     @ApiOkResponse({ description: 'Fetched users successfully' })
     async getAllUsers(@Req() req: Request) {
-        return new MyResponse(true, await this.userService.getAllUsers(req))
-            .setMessage(['FETCHED_ALL_USERS'])
-            .setStatus(HttpStatus.OK)
-            .setMiscellaneous(null);
+        const users = await this.userService.getAllUsers(req);
+        if (users.length) {
+            return new MyResponse(true, users)
+                .setMessage(Messages.FETCHED_ALL_USERS)
+                .setStatus(HttpStatus.OK)
+                .setMiscellaneous(null);
+        }
+        throw new NotFoundException(Messages.USERS_NOT_FOUND);
     }
 
     @UseGuards(RolesGuard)
@@ -97,7 +102,7 @@ export class MahUserController {
     @ApiOkResponse({ description: 'Fetched Profile successfully', type: VerifyUserResponse })
     async getProfile(@Req() req: Request) {
         return new MyResponse(true, this.userService.buildUserRes(req.user))
-            .setMessage(['FETCHED_PROFILE'])
+            .setMessage(Messages.FETCHED_PROFILE)
             .setStatus(HttpStatus.OK)
             .setMiscellaneous(null);
     }
@@ -115,7 +120,7 @@ export class MahUserController {
     @ApiOkResponse({ description: 'Verified successfully', type: VerifyUserResponse })
     async verifyUser(@Param('id') userId: string) {
         return new MyResponse(true, await this.userService.verifyUser(userId))
-            .setMessage(['VERIFIED'])
+            .setMessage(Messages.VERIFIED)
             .setStatus(HttpStatus.OK)
             .setMiscellaneous(null);
     }
@@ -127,7 +132,7 @@ export class MahUserController {
     async login(@Body() loginUserDto: LoginUserDto, @Req() req: Request, @Res({ passthrough: true }) res: Response) {
         return new MyResponse(true, await this.userService.authUser(loginUserDto, req, res))
             .setStatus(HttpStatus.OK)
-            .setMessage(['LOGGED_IN'])
+            .setMessage(Messages.LOGGEDIN)
             .setMiscellaneous(null);
     }
 
@@ -138,7 +143,7 @@ export class MahUserController {
     async refreshToken(@Req() req: Request, @Body() refreshTokenDto: RefreshTokenDto, @Res({ passthrough: true }) res: Response) {
         return new MyResponse(true, await this.userService.refreshTokens(refreshTokenDto.accessToken, req, res))
             .setStatus(HttpStatus.OK)
-            .setMessage(['REFRESHED_TOKEN'])
+            .setMessage(Messages.REFRESHED_TOKEN)
             .setMiscellaneous(null);
     }
 
@@ -156,7 +161,7 @@ export class MahUserController {
     async auth(@Req() req: Request) {
         return new MyResponse(true, await this.userService.authUserByToken(req))
             .setStatus(HttpStatus.OK)
-            .setMessage(['AUTH_SUCCESS'])
+            .setMessage(Messages.AUTH_SUCCESS)
             .setMiscellaneous(null);
     }
 
@@ -174,7 +179,7 @@ export class MahUserController {
     async logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
         return new MyResponse(true, await this.userService.logoutUser(req, res))
             .setStatus(HttpStatus.OK)
-            .setMessage(['LOGGED_OUT'])
+            .setMessage(Messages.LOGGEDOUT)
             .setMiscellaneous(null);
     }
 
@@ -185,7 +190,7 @@ export class MahUserController {
     async forgetPassword(@Body() requestRecoveryDto: RequestRecoveryDto, @Res({ passthrough: true }) res: Response) {
         return new MyResponse(true, await this.userService.sendResetPasswordCodeAndLink(requestRecoveryDto.emailOrPhone, res))
             .setStatus(HttpStatus.CREATED)
-            .setMessage(['RECOVERY_EMAIL_SENT'])
+            .setMessage(Messages.RECOVERY_EMAIL_SENT)
             .setMiscellaneous(null);
     }
 
@@ -196,7 +201,7 @@ export class MahUserController {
     async reSendRequestRecovery(@Body() reSendRequestRecoveryDto: ReSendRequestRecoveryDto, @Res({ passthrough: true }) res: Response) {
         return new MyResponse(true, await this.userService.reSendResetPasswordCodeAndLink(reSendRequestRecoveryDto.userId, res))
             .setStatus(HttpStatus.CREATED)
-            .setMessage(['RECOVERY_EMAIL_SENT'])
+            .setMessage(Messages.RECOVERY_EMAIL_SENT)
             .setMiscellaneous(null);
     }
 
@@ -206,11 +211,11 @@ export class MahUserController {
     @ApiOkResponse({ description: 'Route is valid', type: LogoutResponse })
     async checkValidRecoveryCodeRoute(@Req() req: Request, @Param('userId') userId: string) {
         if (!userId) {
-            throw new BadRequestException('FORBIDDEN_ROUTE');
+            throw new BadRequestException(Messages.ROUTE_ACCESS_FORBIDDEN);
         }
         return new MyResponse(true, await this.userService.checkValidRecoveryCodeRoute(req, userId))
             .setStatus(HttpStatus.OK)
-            .setMessage(['ROUTE_IS_VALID'])
+            .setMessage(Messages.ROUTE_ACCESS_GRANTED)
             .setMiscellaneous(null);
     }
 
@@ -221,7 +226,7 @@ export class MahUserController {
     async generateValidResetPasswordRoute(@Req() req: Request, @Body() changePasswordByCodeDto: ChangePasswordByCodeDto) {
         return new MyResponse(true, await this.userService.changePasswordByCode(changePasswordByCodeDto, req))
             .setStatus(HttpStatus.CREATED)
-            .setMessage(['ROUTE_IS_VALID'])
+            .setMessage('ROUTE_IS_VALID')
             .setMiscellaneous(null);
     }
 
@@ -232,11 +237,11 @@ export class MahUserController {
     async checkValidResetPasswordRoute(@Req() req: Request) {
         const { key, id } = req.query;
         if (!key || !id) {
-            throw new BadRequestException('FORBIDDEN_ROUTE');
+            throw new BadRequestException(Messages.ROUTE_ACCESS_FORBIDDEN);
         }
         return new MyResponse(true, await this.userService.checkRecoveryTokenValidity(id.toString(), key.toString()))
             .setStatus(HttpStatus.OK)
-            .setMessage(['ROUTE_IS_VALID'])
+            .setMessage(Messages.ROUTE_ACCESS_GRANTED)
             .setMiscellaneous(null);
     }
 
@@ -247,7 +252,7 @@ export class MahUserController {
     async resetPassword(@Body() resetPasswordDto: ResetPasswordDto, @Req() req: Request, @Res({ passthrough: true }) res: Response) {
         return new MyResponse(true, await this.userService.resetPassword(resetPasswordDto, req, res))
             .setStatus(HttpStatus.OK)
-            .setMessage(['PASSWORD_CHANGED'])
+            .setMessage(Messages.PASSWORD_CHANGED)
             .setMiscellaneous(null);
     }
 
@@ -264,7 +269,7 @@ export class MahUserController {
     async changePassword(@Body() changePasswordDto: ChangePasswordDto, @Req() req: Request) {
         return new MyResponse(true, await this.userService.changePassword(changePasswordDto, req))
             .setStatus(HttpStatus.OK)
-            .setMessage(['PASSWORD_CHANGED'])
+            .setMessage(Messages.PASSWORD_CHANGED)
             .setMiscellaneous(null);
     }
 
@@ -285,7 +290,7 @@ export class MahUserController {
     async createUserFamily(@Body() createUserFamilyDto: CreateUserFamilyDto, @Req() req: Request) {
         return new MyResponse(true, await this.userService.createUserFamily(req, createUserFamilyDto))
             .setStatus(HttpStatus.CREATED)
-            .setMessage(['ADDED_USER_FAMILY'])
+            .setMessage('ADDED_USER_FAMILY')
             .setMiscellaneous(null);
     }
 
@@ -302,7 +307,7 @@ export class MahUserController {
     async getUserFamily(@Req() req: Request) {
         return new MyResponse(true, await this.userService.getUserFamily(req))
             .setStatus(HttpStatus.OK)
-            .setMessage(['FETCHED_USER_FAMILY'])
+            .setMessage('FETCHED_USER_FAMILY')
             .setMiscellaneous(null);
     }
 
@@ -319,7 +324,7 @@ export class MahUserController {
     async createUserLanguage(@Body() createUserLanguageDto: CreateLanguageDto, @Req() req: Request) {
         return new MyResponse(true, await this.userService.createUserLanguage(req, createUserLanguageDto))
             .setStatus(HttpStatus.CREATED)
-            .setMessage(['ADDED_USER_LANGUAGE'])
+            .setMessage('ADDED_USER_LANGUAGE')
             .setMiscellaneous(null);
     }
 }

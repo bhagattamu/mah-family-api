@@ -89,7 +89,7 @@ export const MahUserSchema = new Schema(
 MahUserSchema.set('toObject', { virtuals: true });
 MahUserSchema.set('toJSON', { virtuals: true });
 MahUserSchema.virtual('isBlock').get(function() {
-    if (this.block.status || new Date(this.block.blockExpires) > new Date()) {
+    if (this.block.status || new Date(this.block.blockExpires) > new Date() || this.block.type === BlockType.COMPLETE_BLOCK) {
         return true;
     } else {
         return false;

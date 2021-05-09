@@ -21,6 +21,7 @@ import { IUserFamily, IUserLanguage } from './interfaces/user-family.interface';
 import { CreateUserFamilyDto } from './dto/create-user-family.dto';
 import { CreateLanguageDto } from 'src/controllers/user/mah-user/dto/create-user-language.dto';
 import { LanguageService } from 'src/controllers/anscestry/language/language.service';
+import { Messages } from 'src/@core/response/error';
 
 @Injectable()
 export class MahUserService {
@@ -36,7 +37,7 @@ export class MahUserService {
     async createUser(newUserDto: NewUserDto) {
         const user = new this.UserModel(newUserDto);
         if (await this.checkEmail(user.email)) {
-            throw new ConflictException(`ALREADY_REGISTERED`);
+            throw new ConflictException(Messages.ALREADY_REGISTERED);
         }
         this.setVerificationInfo(user);
         user.password = Math.random()
@@ -50,7 +51,7 @@ export class MahUserService {
         const { email, password } = loginUseDto;
         const user = await this.checkEmail(email);
         if (!user) {
-            throw new BadRequestException('EMAIL_NOT_REGISTERED');
+            throw new BadRequestException(Messages.USER_NOT_REGISTERED);
         }
         if (await this.isUserVerified(email)) {
             if (!(await this.isUserBlocked(email))) {
@@ -66,7 +67,7 @@ export class MahUserService {
         try {
             this.authService.setRefreshTokenCookie(await this.authService.createRefreshToken(req, user._id), res);
         } catch (err) {
-            throw new UnauthorizedException('REFRESH_TOKEN_CREATION_FAILED');
+            throw new UnauthorizedException(Messages.REFRESH_TOKEN_CREATION_FAILED);
         }
         return { ...this.buildUserRes(user), accessToken: this.authService.createAccessToken(user._id) };
     }
@@ -98,7 +99,7 @@ export class MahUserService {
         if (user && user.verified) {
             return user;
         } else {
-            throw new NotFoundException('USER_NOT_FOUND');
+            throw new NotFoundException(Messages.USERS_NOT_FOUND);
         }
     }
 
@@ -134,13 +135,13 @@ export class MahUserService {
                         valid: true
                     };
                 } else {
-                    throw new ForbiddenException('FORBIDDEN_ROUTE');
+                    throw new ForbiddenException(Messages.ROUTE_ACCESS_FORBIDDEN);
                 }
             } catch (err) {
-                throw new ForbiddenException('FORBIDDEN_ROUTE');
+                throw new ForbiddenException(Messages.ROUTE_ACCESS_FORBIDDEN);
             }
         } else {
-            throw new ForbiddenException('FORBIDDEN_ROUTE');
+            throw new ForbiddenException(Messages.ROUTE_ACCESS_FORBIDDEN);
         }
     }
 
@@ -153,7 +154,7 @@ export class MahUserService {
     async sendResetPasswordCodeAndLink(query: string, res: Response) {
         const user = await this.findUserByEmailOrPhone(query);
         if (user.isBlock && user.block.type === BlockType.COMPLETE_BLOCK) {
-            throw new NotFoundException('USER_NOT_FOUND');
+            throw new NotFoundException(Messages.USER_BLOCKED);
         } else {
             const randomCode = Math.random()
                 .toString(36)
@@ -189,7 +190,7 @@ export class MahUserService {
             const mateCode = this.authService.decryptByAES(mateEncrypted, mateSecret);
             return mateCode;
         } catch (err) {
-            this.recoveryCodeExpired();
+            throw new BadRequestException(Messages.INCORRECT_CODE);
         }
     }
 
@@ -244,14 +245,14 @@ export class MahUserService {
     }
 
     recoveryCodeExpired() {
-        throw new ForbiddenException('RECOVERY_CODE_EXPIRED');
+        throw new ForbiddenException(Messages.RECOVERY_CODE_EXPIRED);
     }
 
     async checkCredentials(user: any, password: string) {
         const match = await compare(password, user.password);
         if (!match) {
             await this.upPasswordNotMatch(user);
-            throw new ForbiddenException('PASSWORD_WRONG');
+            throw new ForbiddenException(Messages.PASSWORD_INCORRECT);
         }
         return match;
     }
@@ -260,8 +261,9 @@ export class MahUserService {
         user.loginAttempts += 1;
         await user.save();
         if (user.loginAttempts > MAX_LOGIN_ATTEMPT) {
-            this.blockUser(user, 'TEMP', MAX_LOGIN_BLOCK);
-            throw new ForbiddenException('USER_BLOCKED');
+            user.loginAttempts = 0;
+            await this.blockUser(user, 'TEMP', MAX_LOGIN_BLOCK);
+            throw new ForbiddenException(Messages.USER_BLOCKED);
         }
     }
 
@@ -272,7 +274,8 @@ export class MahUserService {
 
     async blockUser(user: any, type: string, blockTime: number) {
         if (type === 'TEMP') {
-            user.blockExpires = new Date().setMinutes(new Date().getMinutes() + blockTime);
+            user.block.blockExpires = new Date(new Date().getTime() + blockTime * 60000);
+            user.block.type = BlockType.INCORRECT_CREDENTIAL;
         } else if (type === 'FULL') {
             user.block = true;
         }
@@ -283,7 +286,7 @@ export class MahUserService {
         if (!(await this.UserModel.findOne({ email: email })).isBlock) {
             return false;
         } else {
-            throw new ForbiddenException('USER_BLOCKED');
+            throw new ForbiddenException(Messages.USER_BLOCKED);
         }
     }
 
@@ -291,7 +294,7 @@ export class MahUserService {
         if (await this.UserModel.findOne({ email: email, verified: true })) {
             return true;
         } else {
-            throw new NotFoundException('NOT_VERIFIED');
+            throw new NotFoundException(Messages.NOT_VERIFIED);
         }
     }
 

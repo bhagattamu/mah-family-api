@@ -2,6 +2,6 @@ export interface IResponse {
     success: boolean;
     httpStatus: number;
     data: any;
-    message: Array<string>;
+    message: string;
     miscellaneous: any;
 }

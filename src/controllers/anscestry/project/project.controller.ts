@@ -27,7 +27,7 @@ export class ProjectController {
     async createProject(@Body() createProjectDto: CreateProjectDto, @Req() req: Request) {
         return new Response(true, await this.projectService.createProject(createProjectDto, req))
             .setStatus(HttpStatus.CREATED)
-            .setMessage(['PROJECT_CREATED'])
+            .setMessage('PROJECT_CREATED')
             .setMiscellaneous(null);
     }
 
@@ -44,7 +44,7 @@ export class ProjectController {
     async getAllProjectsAssociatedWithUser(@Req() req: Request) {
         return new Response(true, await this.projectService.getAllProjectsAssociatedWithUser(req))
             .setStatus(HttpStatus.OK)
-            .setMessage(['FETCHED_PROJECT'])
+            .setMessage('FETCHED_PROJECT')
             .setMiscellaneous(null);
     }
 
@@ -52,7 +52,7 @@ export class ProjectController {
     async getProjectById(@Param('projectId') projectId: string) {
         return new Response(true, await this.projectService.findProjectById(projectId))
             .setStatus(HttpStatus.OK)
-            .setMessage(['FETCHED_PROJECT'])
+            .setMessage('FETCHED_PROJECT')
             .setMiscellaneous(null);
     }
 
@@ -60,7 +60,7 @@ export class ProjectController {
     async updateProjectById(@Param('projectId') projectId: string, @Body() updateProjectDto: CreateProjectDto) {
         return new Response(true, await this.projectService.updateProjectById(projectId, updateProjectDto))
             .setStatus(HttpStatus.OK)
-            .setMessage(['UPDATED_PROJECT'])
+            .setMessage('UPDATED_PROJECT')
             .setMiscellaneous(null);
     }
 }

@@ -9,6 +9,7 @@ import { JWT_REFRESH_SECRET, JWT_SECRET, REFRESH_TOKEN_EXPIRY_TIME, TOKEN_EXPIRY
 import { Request, Response } from 'express';
 import { IRefreshToken } from './interfaces/refresh-token.interface';
 import { IJwtPayload } from './interfaces/jwt-payload.interface';
+import { Messages } from '../response/error';
 
 @Injectable()
 export class AuthService {
@@ -17,10 +18,10 @@ export class AuthService {
     async validateUser(jwtPayload: any): Promise<any> {
         const user = await this.UserModel.findOne({ _id: jwtPayload.userId });
         if (!user) {
-            throw new UnauthorizedException('User not found.');
+            throw new UnauthorizedException(Messages.USERS_NOT_FOUND);
         } else {
             if (!user.verified) {
-                throw new UnauthorizedException('User not verified.');
+                throw new UnauthorizedException(Messages.USER_NOT_VERIFIED);
             }
         }
         return user;
@@ -76,17 +77,17 @@ export class AuthService {
                                 refreshToken: encryptedToken
                             };
                         } else {
-                            throw new UnauthorizedException('Please login to continue.');
+                            throw new UnauthorizedException(Messages.LOGIN_TO_CONTINUE);
                         }
                     }
                 } else {
-                    throw new UnauthorizedException('Please login to continue.');
+                    throw new UnauthorizedException(Messages.LOGIN_TO_CONTINUE);
                 }
             } else {
-                throw new UnauthorizedException('Please login to continue.');
+                throw new UnauthorizedException(Messages.LOGIN_TO_CONTINUE);
             }
         } else {
-            throw new UnauthorizedException('Please login to continue.');
+            throw new UnauthorizedException(Messages.LOGIN_TO_CONTINUE);
         }
     }
 
@@ -97,7 +98,7 @@ export class AuthService {
             if (bearerToken.startsWith('bearer ')) {
                 token = bearerToken.substring(7, bearerToken.length);
             } else {
-                throw new UnauthorizedException('User not valid.');
+                throw new UnauthorizedException(Messages.USER_NOT_VALID);
             }
         }
         return token;
@@ -117,7 +118,7 @@ export class AuthService {
                 }
             ).exec();
         } else {
-            throw new UnauthorizedException('User not valid.');
+            throw new UnauthorizedException(Messages.USER_NOT_VALID);
         }
     }
 

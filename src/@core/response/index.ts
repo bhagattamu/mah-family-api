@@ -4,7 +4,7 @@ export class Response {
     success: boolean;
     httpStatus: number;
     data: any;
-    message: Array<string>;
+    message: string;
     miscellaneous: any;
 
     constructor(success: boolean, data: any) {
@@ -27,7 +27,7 @@ export class Response {
         return this;
     }
 
-    setMessage(message: Array<string>) {
+    setMessage(message: string) {
         this.message = message;
         return this;
     }
