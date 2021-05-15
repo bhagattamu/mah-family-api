@@ -7,6 +7,7 @@ import { Request } from 'express';
 import { Roles } from 'src/@core/auth/guards/roles.decorator';
 import { Role } from 'src/@core/auth/guards/role.enum';
 import { RolesGuard } from 'src/@core/auth/guards/roles.guard';
+import { ProjectModuleMessages } from 'src/@core/response/error/project.constant';
 
 @ApiTags('Project -> A family tree project')
 @UseGuards(RolesGuard)
@@ -27,7 +28,7 @@ export class ProjectController {
     async createProject(@Body() createProjectDto: CreateProjectDto, @Req() req: Request) {
         return new Response(true, await this.projectService.createProject(createProjectDto, req))
             .setStatus(HttpStatus.CREATED)
-            .setMessage('PROJECT_CREATED')
+            .setMessage(ProjectModuleMessages.PROJECT_CREATED)
             .setMiscellaneous(null);
     }
 
@@ -44,7 +45,7 @@ export class ProjectController {
     async getAllProjectsAssociatedWithUser(@Req() req: Request) {
         return new Response(true, await this.projectService.getAllProjectsAssociatedWithUser(req))
             .setStatus(HttpStatus.OK)
-            .setMessage('FETCHED_PROJECT')
+            .setMessage(ProjectModuleMessages.PROJECTS_FETCHED)
             .setMiscellaneous(null);
     }
 
@@ -52,7 +53,7 @@ export class ProjectController {
     async getProjectById(@Param('projectId') projectId: string) {
         return new Response(true, await this.projectService.findProjectById(projectId))
             .setStatus(HttpStatus.OK)
-            .setMessage('FETCHED_PROJECT')
+            .setMessage(ProjectModuleMessages.PROJECT_FETCHED)
             .setMiscellaneous(null);
     }
 
@@ -60,7 +61,7 @@ export class ProjectController {
     async updateProjectById(@Param('projectId') projectId: string, @Body() updateProjectDto: CreateProjectDto) {
         return new Response(true, await this.projectService.updateProjectById(projectId, updateProjectDto))
             .setStatus(HttpStatus.OK)
-            .setMessage('UPDATED_PROJECT')
+            .setMessage(ProjectModuleMessages.PROJECT_UPDATED)
             .setMiscellaneous(null);
     }
 }

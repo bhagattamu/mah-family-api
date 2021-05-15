@@ -43,6 +43,10 @@ export const SubjectSchema = new Schema(
         address: {
             type: String
         },
+        isLiving: {
+            type: Boolean,
+            default: true
+        },
         dateOfBirth: {
             type: Date
         },

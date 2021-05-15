@@ -65,6 +65,13 @@ export class CreateSubjectDto {
     readonly imageUrl: string;
 
     @ApiProperty({
+        example: true,
+        description: 'Living status'
+    })
+    @IsNotEmpty()
+    readonly isLiving: boolean;
+
+    @ApiProperty({
         example: new Date(),
         description: 'Date of birth'
     })

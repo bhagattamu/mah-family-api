@@ -9,6 +9,7 @@ export interface ISubject extends Document {
     imageURL: string;
     country?: string;
     address?: string;
+    isLiving: boolean;
     dateOfBirth?: Date;
     dateOfDeath?: Date;
     marriages?: [
